@@ -19,6 +19,8 @@ import mirror.RefMethod;
 import mirror.MethodParams;
 
 public class LoadedApk {
+    //通过load调用，本类中的Ref开头类型的字段都被赋值为，和系统中同名字属性的值，
+    // 例如mApplicationInfo，makeApplication都被赋值为android.app.LoadedApk类中同名属性的值
     public static Class Class = RefClass.load(LoadedApk.class, "android.app.LoadedApk");
     public static RefObject<ApplicationInfo> mApplicationInfo;
     @MethodParams({boolean.class, Instrumentation.class})

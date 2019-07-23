@@ -3,7 +3,9 @@ apply plugin: 'com.android.library'
 android {
     compileSdkVersion 26
     buildToolsVersion '26.0.2'
-
+    lintOptions {
+        abortOnError false
+    }
     defaultConfig {
         minSdkVersion 14
         targetSdkVersion 22
@@ -32,7 +34,11 @@ android {
     }
 }
 
-
+android {
+    lintOptions {
+        abortOnError false
+    }
+}
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
 }

@@ -7,7 +7,7 @@ fork VirtualApp
 目录结构
 VirtualApp
     ├─app
-    │  ├─src
+    │  └─src
     │      └─main
     │          ├─assets
     │          ├─java
@@ -163,8 +163,8 @@ VirtualApp
                 │  │              │  └─parser
                 │  │              ├─secondary
                 │  │              └─vs
-                │  └─mirror                        //系统framework层的源码，结构和系统的一样，封装了反射获取系统隐藏method和filed的方法，实现访问修改                        
-                │      ├─android
+                │  └─mirror                        //系统framework层的镜像，结构和系统的一样，封装了反射获取系统隐藏method和filed的方法，实现访问修改                        
+                │      ├─android                   // /frameworks/base/core/java/android/
                 │      │  ├─accounts
                 │      │  ├─app
                 │      │  │  ├─admin
@@ -193,16 +193,16 @@ VirtualApp
                 │      │  ├─renderscript
                 │      │  ├─rms
                 │      │  │  └─resource
-                │      │  ├─service
-                │      │  │  └─persistentdata
-                │      │  ├─telephony
+                │      │  ├─service 
+                │      │  │  └─persistentdata                 
+                │      │  ├─telephony                     // /frameworks/base/telephony/java/android/telephony/                    
                 │      │  ├─util
                 │      │  ├─view
                 │      │  ├─webkit
                 │      │  └─widget
                 │      ├─com
-                │      │  └─android
-                │      │      └─internal
+                │      │  └─android                       // /frameworks/base/core/java/com/android
+                │      │      └─internal                 
                 │      │          ├─app
                 │      │          ├─appwidget
                 │      │          ├─content
@@ -211,7 +211,7 @@ VirtualApp
                 │      │          ├─telephony
                 │      │          └─view
                 │      │              └─inputmethod
-                │      ├─dalvik
+                │      ├─dalvik                           // /libcore/libart/src/main/java/dalvik
                 │      │  └─system
                 │      ├─java
                 │      │  └─lang
