@@ -154,6 +154,7 @@ public class VAppManagerService implements IAppManager {
         }
         VPackage pkg = null;
         try {
+            //解析包结构，这个结构会序列化存到本地
             pkg = PackageParserEx.parsePackage(packageFile);
         } catch (Throwable e) {
             e.printStackTrace();
@@ -176,6 +177,7 @@ public class VAppManagerService implements IAppManager {
             }
             res.isUpdate = true;
         }
+        //获得 app 安装文件夹和so文件夹
         File appDir = VEnvironment.getDataAppPackageDirectory(pkg.packageName);
         File libDir = new File(appDir, "lib");
         if (res.isUpdate) {
@@ -192,8 +194,9 @@ public class VAppManagerService implements IAppManager {
         if (existSetting != null && existSetting.dependSystem) {
             dependSystem = false;
         }
-
+        // 是否基于系统的 apk 加载，前提是安装过的 apk 并且 dependSystem 开关打开
         NativeLibraryHelperCompat.copyNativeBinaries(new File(path), libDir);
+        // 如果不基于系统，copy apk的相关资源过来
         if (!dependSystem) {
             File privatePackageFile = new File(appDir, "base.apk");
             File parentFolder = privatePackageFile.getParentFile();
@@ -213,7 +216,9 @@ public class VAppManagerService implements IAppManager {
         if (existOne != null) {
             PackageCacheManager.remove(pkg.packageName);
         }
+        //给可执行权限，5.0之后在SD卡上执行bin需要可执行权限
         chmodPackageDictionary(packageFile);
+        //PackageSetting 的一些配置，后面会序列化在磁盘上
         PackageSetting ps;
         if (existSetting != null) {
             ps = existSetting;
@@ -235,7 +240,9 @@ public class VAppManagerService implements IAppManager {
                 ps.setUserState(userId, false/*launched*/, false/*hidden*/, installed);
             }
         }
+        //保存VPackage信息到本地
         PackageParserEx.savePackageCache(pkg);
+        //保存到RamCache
         PackageCacheManager.put(pkg, ps);
         mPersistenceLayer.save();
         if (!dependSystem) {

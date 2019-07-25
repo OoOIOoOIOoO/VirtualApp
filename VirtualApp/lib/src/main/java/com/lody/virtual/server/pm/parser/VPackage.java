@@ -22,6 +22,8 @@ import java.util.ArrayList;
 
 /**
  * @author Lody
+ * VPackage 几乎保存了 apk 中所有的关键信息，
+ * 尤其是组件的数据结构会在 app 在 VA 中运行的时候给 VAMS，VPMS 这些 VAService 提供 apk 的组件信息。
  */
 
 public class VPackage implements Parcelable {

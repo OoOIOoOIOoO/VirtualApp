@@ -49,6 +49,7 @@ public final class BinderProvider extends ContentProvider {
     @Override
     public boolean onCreate() {
         Context context = getContext();
+        //这是一个空前台服务，目的是为了保活 VAService 进程，即 :x 进程
         DaemonService.startup(context);
         if (!VirtualCore.get().isStartup()) {
             return true;
@@ -75,6 +76,11 @@ public final class BinderProvider extends ContentProvider {
         return true;
     }
 
+
+    /*
+    * call方法用于让其他进程调用本进程中的方法
+    * 在这里，就是将ServiceFetcher暴露给其他进程
+    * */
     @Override
     public Bundle call(String method, String arg, Bundle extras) {
         if ("@".equals(method)) {
@@ -113,6 +119,11 @@ public final class BinderProvider extends ContentProvider {
         return 0;
     }
 
+    /*
+    *  ServiceFetcher 服务用于向外部暴露 VAService 中的所有服务的 IBinder句柄
+    *  ServicecFetcher 自身的 IBnder 则通过 BinderProvicer这个ContentProvider 暴露给其他进程
+    *  ServiceManagerNative这个类里面就进行了进程间调用
+    * */
     private class ServiceFetcher extends IServiceFetcher.Stub {
         @Override
         public IBinder getService(String name) throws RemoteException {

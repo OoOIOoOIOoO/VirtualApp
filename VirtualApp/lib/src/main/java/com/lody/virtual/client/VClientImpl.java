@@ -217,6 +217,9 @@ public final class VClientImpl extends IVClient.Stub {
         }
     }
 
+    /*
+    * 创建双开应用的application
+    * */
     private void bindApplicationNoCheck(String packageName, String processName, ConditionVariable lock) {
         VDeviceInfo deviceInfo = getDeviceInfo();
         if (processName == null) {
@@ -328,6 +331,7 @@ public final class VClientImpl extends IVClient.Stub {
         }
         VirtualCore.get().getComponentDelegate().beforeApplicationCreate(mInitialApplication);
         try {
+            //创建双开进程application
             mInstrumentation.callApplicationOnCreate(mInitialApplication);
             InvocationStubManager.getInstance().checkEnv(HCallbackStub.class);
             if (conflict) {

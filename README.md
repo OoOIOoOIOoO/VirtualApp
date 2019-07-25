@@ -1,8 +1,13 @@
 fork VirtualApp
 
 自己尝试撸一遍源码，增加注释
+VAService 是指 VA 仿造 Android 原生 framework 层 Service 实现的一套副本，
+举例有 VActivityManagerService，它和系统 AMS 一样，只不过他管理的是 VA 内部 Client App 的组件会话。
+VAService 统一管理
+所有 VAService 直接继承与 XXX.Stub，也就是 Binder，并且直接使用了一个 Map 储存在 VAService 进程空间中，并没有注册到系统 AMS 中，
+事实上在 VAService 进程中，每个 Service 都被当作一个普通对象 new 和 初始化。 
+最终，他们被添加到了 ServiceCache 中
 
-20190711
 
 目录结构
 VirtualApp
@@ -87,7 +92,10 @@ VirtualApp
                 │  │          │  │  ├─base
                 │  │          │  │  ├─delegate
                 │  │          │  │  ├─providers
-                │  │          │  │  ├─proxies
+                │  │          │  │  ├─proxies        //关于 MethodProxies 叫这个名字的类很多，一个 MethodProxies 对应一个需要 Hook 的 framework 类型，
+				                                         需要 Hook 的方法以内部类(MethodProxy)的形式罗列在内部。
+														 @Inject(MethodProxies.class)
+														 将要 Hook 的方法集合 MethodProxies 绑定到 Stub 上。最终调用内部的 addMethodProxy 方法。
                 │  │          │  │  │  ├─account
                 │  │          │  │  │  ├─alarm
                 │  │          │  │  │  ├─am

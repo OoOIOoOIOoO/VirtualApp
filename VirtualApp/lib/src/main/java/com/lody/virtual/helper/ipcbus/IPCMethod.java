@@ -6,6 +6,7 @@ import android.os.IInterface;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.os.RemoteException;
+import android.util.Log;
 
 import java.lang.reflect.Array;
 import java.lang.reflect.InvocationTargetException;
@@ -56,6 +57,8 @@ public class IPCMethod {
 
     public void handleTransact(Object server, Parcel data, Parcel reply) {
         data.enforceInterface(interfaceName);
+        Log.e("zzmclass","interfaceName: "+interfaceName);
+        Log.e("zzmclass",getClass().getClassLoader().toString());
         Object[] parameters = data.readArray(getClass().getClassLoader());
         if (parameters != null && parameters.length > 0) {
             for (int i = 0; i < parameters.length; i++) {

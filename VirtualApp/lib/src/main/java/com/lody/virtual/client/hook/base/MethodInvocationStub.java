@@ -30,6 +30,7 @@ public class MethodInvocationStub<T> {
     private static final String TAG = MethodInvocationStub.class.getSimpleName();
 
     private Map<String, MethodProxy> mInternalMethodProxies = new HashMap<>();
+    //target 方法
     private T mBaseInterface;
     private T mProxyInterface;
     private String mIdentityName;
@@ -40,8 +41,16 @@ public class MethodInvocationStub<T> {
         return mInternalMethodProxies;
     }
 
-
+    //利用动态代理获取MethodProxy中真实的某个对象
+    /*
+    * 这里的关系很奇妙，首先MethodProxy类是Hook的代理接口，动态代理中的 call。
+    * MethodProxies类是一个个具体的hook系统点
+    * 通过本类的addMethodProxy将这些hook点添加过来
+    * new MethodInvocationStub的时候，传过来的其实是一个具体的hook点，然后通过本类的动态代理，实现调用
+    *
+    * */
     public MethodInvocationStub(T baseInterface, Class<?>... proxyInterfaces) {
+
         this.mBaseInterface = baseInterface;
         if (baseInterface != null) {
             if (proxyInterfaces == null) {

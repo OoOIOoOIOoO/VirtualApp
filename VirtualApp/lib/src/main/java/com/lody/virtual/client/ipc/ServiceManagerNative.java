@@ -37,6 +37,8 @@ public class ServiceManagerNative {
         if (sFetcher == null || !sFetcher.asBinder().isBinderAlive()) {
             synchronized (ServiceManagerNative.class) {
                 Context context = VirtualCore.get().getContext();
+                //利用ContentProvider的call调用其他进程的IBinder
+                //在这里，就是拿到了ServiceFetcher
                 Bundle response = new ProviderCall.Builder(context, SERVICE_CP_AUTH).methodName("@").call();
                 if (response != null) {
                     IBinder binder = BundleCompat.getBinder(response, "_VA_|_binder_");
@@ -71,9 +73,12 @@ public class ServiceManagerNative {
     }
 
     public static IBinder getService(String name) {
+        //如果是本地服务，就从ServiceCache里面拿
         if (VirtualCore.get().isServerProcess()) {
             return ServiceCache.getService(name);
         }
+        //否则远程获取，这里就是对应了BinderProvider的ServiceFetcher句柄
+        //通过 ServiceFetcher 的句柄找到远程 Service 的句柄
         IServiceFetcher fetcher = getServiceFetcher();
         if (fetcher != null) {
             try {

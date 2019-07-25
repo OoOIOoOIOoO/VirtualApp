@@ -179,9 +179,11 @@ public final class VirtualCore {
             VASettings.STUB_CP_AUTHORITY = context.getPackageName() + "." + VASettings.STUB_DEF_AUTHORITY;
             ServiceManagerNative.SERVICE_CP_AUTH = context.getPackageName() + "." + ServiceManagerNative.SERVICE_DEF_AUTH;
             this.context = context;
+            //获取ActivityThread实例
             mainThread = ActivityThread.currentActivityThread.call();
             unHookPackageManager = context.getPackageManager();
             hostPkgInfo = unHookPackageManager.getPackageInfo(context.getPackageName(), PackageManager.GET_PROVIDERS);
+            //初始化VAServiceCache
             IPCBus.initialize(new IServerCache() {
                 @Override
                 public void join(String serverName, IBinder binder) {
@@ -194,9 +196,11 @@ public final class VirtualCore {
                 }
             });
             detectProcessType();
+            //hook系统类
             InvocationStubManager invocationStubManager = InvocationStubManager.getInstance();
             invocationStubManager.init();
             invocationStubManager.injectAll();
+            //修复权限管理
             ContextFixer.fixContext(context);
             isStartUp = true;
             if (initLock != null) {
@@ -339,6 +343,8 @@ public final class VirtualCore {
 
     public InstallResult installPackage(String apkPath, int flags) {
         try {
+            // 调用远程 VAService
+            //最终调用的是VAppManagerService.installPackage():
             return getService().installPackage(apkPath, flags);
         } catch (RemoteException e) {
             return VirtualRuntime.crash(e);

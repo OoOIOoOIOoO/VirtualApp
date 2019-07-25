@@ -149,6 +149,7 @@ class MethodProxies {
      */
     static class GetServiceInfo extends MethodProxy {
 
+
         @Override
         public String getMethodName() {
             return "getServiceInfo";

@@ -48,6 +48,8 @@ public class PackageParserEx {
     private static final ArrayMap<String, String[]> sSharedLibCache = new ArrayMap<>();
 
     public static VPackage parsePackage(File packageFile) throws Throwable {
+        //解析manifest文件的parsePackage其实是隐藏的
+        // 为了实现这一动作，所以才会有mirror下面和系统一样路径的源码，目的就是为了欺骗编译器。实现解析
         PackageParser parser = PackageParserCompat.createParser(packageFile);
         PackageParser.Package p = PackageParserCompat.parsePackage(parser, packageFile, 0);
         if (p.requestedPermissions.contains("android.permission.FAKE_PACKAGE_SIGNATURE")
@@ -136,7 +138,10 @@ public class PackageParserEx {
             }
         }
     }
-
+/*
+* buildPackageCache
+* 是为了将VPackage转换为可序列化的，用于保存到本地
+ * */
     private static VPackage buildPackageCache(PackageParser.Package p) {
         VPackage cache = new VPackage();
         cache.activities = new ArrayList<>(p.activities.size());

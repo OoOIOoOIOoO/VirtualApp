@@ -84,18 +84,26 @@ public abstract class MethodProxy {
 
     public abstract String getMethodName();
 
+    //hook之前调用的方法
     public boolean beforeCall(Object who, Method method, Object... args) {
         return true;
     }
 
+    //真正调用被hook的方法，
+    //怎么添加一个hook方法
+    // 1，在MethodInvocationStub的addMethodProxy添加
+    //2,  Stub 上添加 @Inject 注解
+    //call 方法在MethodInvocationStub执行，用的是动态代理
     public Object call(Object who, Method method, Object... args) throws Throwable {
         return method.invoke(who, args);
     }
 
+    //调用之后执行
     public Object afterCall(Object who, Method method, Object[] args, Object result) throws Throwable {
         return result;
     }
 
+    //重要方法之一，代理是否生效，目前是只在子进程生效
     public boolean isEnable() {
         return enable;
     }
