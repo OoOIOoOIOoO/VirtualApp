@@ -26,7 +26,7 @@ public final class RefClass {
             e.printStackTrace();
         }
     }
-
+    //通过load调用，mappingClass中的Ref开头类型的字段都被赋值为，和系统中同名字的value，
     public static Class<?> load(Class<?> mappingClass, String className) {
         try {
             return load(mappingClass, Class.forName(className));

@@ -1,5 +1,7 @@
 package com.lody.virtual.helper.ipcbus;
 
+import android.content.Context;
+import android.content.pm.PackageManager;
 import android.os.Binder;
 import android.os.IBinder;
 import android.os.IInterface;
@@ -7,6 +9,10 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import android.os.RemoteException;
 import android.util.Log;
+
+import com.lody.virtual.VALog;
+import com.lody.virtual.client.VClientImpl;
+import com.lody.virtual.client.core.VirtualCore;
 
 import java.lang.reflect.Array;
 import java.lang.reflect.InvocationTargetException;
@@ -59,7 +65,19 @@ public class IPCMethod {
         data.enforceInterface(interfaceName);
         Log.e("zzmclass","interfaceName: "+interfaceName);
         Log.e("zzmclass",getClass().getClassLoader().toString());
-        Object[] parameters = data.readArray(getClass().getClassLoader());
+        ClassLoader classLoader=null;
+        try {
+            classLoader = VirtualCore.get().getContext().createPackageContext("com.suning.mobile.ebuy", Context.CONTEXT_INCLUDE_CODE | Context.CONTEXT_IGNORE_SECURITY).getClassLoader();
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+        }
+        Object[] parameters;
+        try {
+            parameters = data.readArray(getClass().getClassLoader());
+        } catch (Exception e) {
+            VALog.e("zms:"+classLoader.toString());
+            parameters = data.readArray(classLoader);
+        }
         if (parameters != null && parameters.length > 0) {
             for (int i = 0; i < parameters.length; i++) {
                 if (converters[i] != null) {

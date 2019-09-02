@@ -4,6 +4,7 @@ import android.os.Binder;
 import android.os.Build;
 import android.os.Process;
 
+import com.lody.virtual.VALog;
 import com.lody.virtual.client.core.VirtualCore;
 import com.lody.virtual.client.env.VirtualRuntime;
 import com.lody.virtual.client.ipc.VActivityManager;
@@ -49,9 +50,11 @@ public class NativeEngine {
         sDexOverrideMap = new HashMap<>(installedAppInfos.size());
         for (InstalledAppInfo info : installedAppInfos) {
             try {
+                VALog.e("apkPath:"+info.apkPath);
                 sDexOverrideMap.put(new File(info.apkPath).getCanonicalPath(), info);
             } catch (IOException e) {
                 e.printStackTrace();
+                VALog.e("not found apkPath:"+info.apkPath);
             }
         }
     }

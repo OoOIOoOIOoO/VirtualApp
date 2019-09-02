@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.RemoteException;
+import android.util.Log;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -39,7 +40,9 @@ public class LoadingActivity extends VActivity {
             loadingPageIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             loadingPageIntent.putExtra(KEY_INTENT, intent);
             loadingPageIntent.putExtra(KEY_USER, userId);
+            Log.d("Q_M", "---->调用的是原生api StartActivity类");
             context.startActivity(loadingPageIntent);
+            Log.d("Q_M", "---->调用的是原生StartActivity类结束");
         }
     }
 

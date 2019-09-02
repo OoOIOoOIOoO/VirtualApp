@@ -3,6 +3,7 @@ package com.lody.virtual.client.hook.base;
 import android.text.TextUtils;
 import android.util.Log;
 
+import com.lody.virtual.VALog;
 import com.lody.virtual.client.hook.utils.MethodParameterUtils;
 import com.lody.virtual.helper.utils.VLog;
 
@@ -46,7 +47,8 @@ public class MethodInvocationStub<T> {
     * 这里的关系很奇妙，首先MethodProxy类是Hook的代理接口，动态代理中的 call。
     * MethodProxies类是一个个具体的hook系统点
     * 通过本类的addMethodProxy将这些hook点添加过来
-    * new MethodInvocationStub的时候，传过来的其实是一个具体的hook点，然后通过本类的动态代理，实现调用
+    * 传过来的baseInterface其实是一个具体的hook点，然后通过本类的动态代理，实现调用
+    * 更新，感觉baseInterface是系统filed或者method的value，今天分析activityManager发现的，有待考究
     *
     * */
     public MethodInvocationStub(T baseInterface, Class<?>... proxyInterfaces) {
@@ -55,6 +57,10 @@ public class MethodInvocationStub<T> {
         if (baseInterface != null) {
             if (proxyInterfaces == null) {
                 proxyInterfaces = MethodParameterUtils.getAllInterface(baseInterface.getClass());
+                VALog.e("zzm:"+baseInterface.getClass().getName());
+                for (Class c : proxyInterfaces) {
+                    VALog.e("zzms:"+c.getName());
+                }
             }
             mProxyInterface = (T) Proxy.newProxyInstance(baseInterface.getClass().getClassLoader(), proxyInterfaces, new HookInvocationHandler());
         } else {

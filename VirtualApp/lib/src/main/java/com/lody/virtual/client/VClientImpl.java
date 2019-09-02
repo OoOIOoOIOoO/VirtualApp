@@ -227,11 +227,13 @@ public final class VClientImpl extends IVClient.Stub {
         }
         mTempLock = lock;
         try {
+            // 设置未捕获异常的 Callback
             setupUncaughtHandler();
         } catch (Throwable e) {
             e.printStackTrace();
         }
         try {
+            // 修复 Provider
             fixInstalledProviders();
         } catch (Throwable e) {
             e.printStackTrace();
@@ -242,6 +244,7 @@ public final class VClientImpl extends IVClient.Stub {
                 VirtualCore.mainThread(),
                 null
         );
+        // 从 VPMS 获取 apk 信息
         AppBindData data = new AppBindData();
         InstalledAppInfo info = VirtualCore.get().getInstalledAppInfo(packageName, 0);
         if (info == null) {
@@ -254,6 +257,7 @@ public final class VClientImpl extends IVClient.Stub {
         data.providers = VPackageManager.get().queryContentProviders(processName, getVUid(), PackageManager.GET_META_DATA);
         Log.i(TAG, "Binding application " + data.appInfo.packageName + " (" + data.processName + ")");
         mBoundApplication = data;
+        // 设置进程名
         VirtualRuntime.setupRuntime(data.processName, data.appInfo);
         int targetSdkVersion = data.appInfo.targetSdkVersion;
         if (targetSdkVersion < Build.VERSION_CODES.GINGERBREAD) {
@@ -264,20 +268,26 @@ public final class VClientImpl extends IVClient.Stub {
             mirror.android.os.Message.updateCheckRecycle.call(targetSdkVersion);
         }
         if (VASettings.ENABLE_IO_REDIRECT) {
+            // IO 重定向
             startIOUniformer();
         }
+
         NativeEngine.launchEngine();
         Object mainThread = VirtualCore.mainThread();
+        // 准备 dex 列表
         NativeEngine.startDexOverride();
+        // 获得子 pkg 的 Context 前提是必须在系统中安装的（疑问？）
         Context context = createPackageContext(data.appInfo.packageName);
+        // 设置虚拟机系统环境 临时文件夹 codeCacheDir
         System.setProperty("java.io.tmpdir", context.getCacheDir().getAbsolutePath());
+        // oat 的 cache 目录
         File codeCacheDir;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             codeCacheDir = context.getCodeCacheDir();
         } else {
             codeCacheDir = context.getCacheDir();
         }
-
+        // 硬件加速的 cache 目录
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.N) {
             if (HardwareRenderer.setupDiskCache != null) {
                 HardwareRenderer.setupDiskCache.call(codeCacheDir);
@@ -296,9 +306,11 @@ public final class VClientImpl extends IVClient.Stub {
                 RenderScript.setupDiskCache.call(codeCacheDir);
             }
         }
+        // 修复子 App 中 ActivityThread.AppBinderData 的参数，因为之前用的是在 Host 程序中注册的 Stub 的信息
         Object boundApp = fixBoundApp(mBoundApplication);
         mBoundApplication.info = ContextImpl.mPackageInfo.get(context);
         mirror.android.app.ActivityThread.AppBindData.info.set(boundApp, data.info);
+        // 设置 targetSdkVersion ，原来也是和 Host 程序一样的
         VMRuntime.setTargetSdkVersion.call(VMRuntime.getRuntime.call(), data.appInfo.targetSdkVersion);
 
         Configuration configuration = context.getResources().getConfiguration();
@@ -316,22 +328,26 @@ public final class VClientImpl extends IVClient.Stub {
         if (!conflict) {
             InvocationStubManager.getInstance().checkEnv(AppInstrumentation.class);
         }
+        // 开始构建子程序包的 Application 对象，并且替换原来通过 Host Stub 生成的 mInitialApplication
         mInitialApplication = LoadedApk.makeApplication.call(data.info, false, null);
         mirror.android.app.ActivityThread.mInitialApplication.set(mainThread, mInitialApplication);
         ContextFixer.fixContext(mInitialApplication);
         if (Build.VERSION.SDK_INT >= 24 && "com.tencent.mm:recovery".equals(processName)) {
+            //修复微信
             fixWeChatRecovery(mInitialApplication);
         }
         if (data.providers != null) {
+            // 注册 Providers
             installContentProviders(mInitialApplication, data.providers);
         }
+        // 初始化锁开，异步调用的初始化函数可以返回了
         if (lock != null) {
             lock.open();
             mTempLock = null;
         }
         VirtualCore.get().getComponentDelegate().beforeApplicationCreate(mInitialApplication);
         try {
-            //创建双开进程application
+            // 调用 Application.onCreate
             mInstrumentation.callApplicationOnCreate(mInitialApplication);
             InvocationStubManager.getInstance().checkEnv(HCallbackStub.class);
             if (conflict) {
