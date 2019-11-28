@@ -20,6 +20,8 @@ import android.view.MotionEvent;
 
 /**
  * @author Lody
+ * 在应用程序的任何组件创建之前初始化，可以用来监控系统与应用的所有交互。
+ *
  */
 public class InstrumentationDelegate extends Instrumentation {
 

@@ -30,6 +30,7 @@ public class AppPagerAdapter extends FragmentPagerAdapter {
         super(fm);
         titles.add(VApp.getApp().getResources().getString(R.string.clone_apps));
         dirs.add(null);
+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
             Context ctx = VApp.getApp();
             StorageManager storage = (StorageManager) ctx.getSystemService(Context.STORAGE_SERVICE);

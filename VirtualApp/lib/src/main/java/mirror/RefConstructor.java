@@ -2,7 +2,11 @@ package mirror;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
-
+/*
+*
+* 构造方法类封装了Java反射中java.lang.reflect.Constructor的ctor.newInstance()方法。
+*
+* */
 public class RefConstructor<T> {
     private Constructor<?> ctor;
 

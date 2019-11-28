@@ -5,7 +5,11 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 import static mirror.RefStaticMethod.getProtoType;
-
+/*
+* 方法类封装了Java反射中java.lang.reflect.Method的method.invoke()方法；
+* 在RefMethod构造方法中，会根据不同的注解MethodParams, MethodReflectParams获取对应的方法参数，从而获取对应的Method。
+* 如果没有注解，表明对应方法没有参数。
+* */
 @SuppressWarnings("unchecked")
 public class RefMethod<T> {
     private Method method;

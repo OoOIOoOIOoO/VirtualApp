@@ -2,6 +2,7 @@ package com.lody.virtual.client.hook.base;
 
 import android.content.Context;
 
+import com.lody.virtual.VALog;
 import com.lody.virtual.client.core.InvocationStubManager;
 import com.lody.virtual.client.core.VirtualCore;
 import com.lody.virtual.client.interfaces.IInjector;
@@ -43,15 +44,18 @@ public abstract class MethodInvocationProxy<T extends MethodInvocationStub> impl
             return;
         }
         Class<? extends MethodInvocationProxy> clazz = getClass();
+        VALog.e("zzm... super  " + clazz.getName());
         Inject inject = clazz.getAnnotation(Inject.class);
         if (inject != null) {
             Class<?> proxiesClass = inject.value();
             Class<?>[] innerClasses = proxiesClass.getDeclaredClasses();
+            VALog.e("zzm... proxiesClass  " + proxiesClass.getName());
             for (Class<?> innerClass : innerClasses) {
                 if (!Modifier.isAbstract(innerClass.getModifiers())
                         && MethodProxy.class.isAssignableFrom(innerClass)
                         && innerClass.getAnnotation(SkipInject.class) == null) {
                     addMethodProxy(innerClass);
+                    VALog.e("zzm...  " + innerClass.getName());
                 }
             }
 

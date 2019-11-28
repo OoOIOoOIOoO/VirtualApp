@@ -65,19 +65,7 @@ public class IPCMethod {
         data.enforceInterface(interfaceName);
         Log.e("zzmclass","interfaceName: "+interfaceName);
         Log.e("zzmclass",getClass().getClassLoader().toString());
-        ClassLoader classLoader=null;
-        try {
-            classLoader = VirtualCore.get().getContext().createPackageContext("com.suning.mobile.ebuy", Context.CONTEXT_INCLUDE_CODE | Context.CONTEXT_IGNORE_SECURITY).getClassLoader();
-        } catch (PackageManager.NameNotFoundException e) {
-            e.printStackTrace();
-        }
-        Object[] parameters;
-        try {
-            parameters = data.readArray(getClass().getClassLoader());
-        } catch (Exception e) {
-            VALog.e("zms:"+classLoader.toString());
-            parameters = data.readArray(classLoader);
-        }
+        Object[] parameters = data.readArray(getClass().getClassLoader());
         if (parameters != null && parameters.length > 0) {
             for (int i = 0; i < parameters.length; i++) {
                 if (converters[i] != null) {

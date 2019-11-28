@@ -30,6 +30,10 @@ import mirror.RefStaticInt;
 import mirror.RefStaticMethod;
 
 public class ActivityThread {
+    //在mirror.android.app.ActivityThread类加载时，调用RefClass.load(ActivityThread.class, "android.app.ActivityThread");方法，
+    //遍历mirror.android.app.ActivityThread的成员变量，
+    //从android.app.ActivityThread中获取对应的Field封装成Ref开头的类（例如RefStaticMethod）赋给mirror.android.app.ActivityThread对应的field。
+    //其他类同上
     public static Class<?> TYPE = RefClass.load(ActivityThread.class, "android.app.ActivityThread");
     public static RefStaticMethod currentActivityThread;
     public static RefMethod<String> getProcessName;

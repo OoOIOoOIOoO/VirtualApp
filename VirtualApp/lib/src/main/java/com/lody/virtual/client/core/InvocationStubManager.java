@@ -111,7 +111,7 @@ public final class InvocationStubManager {
 	private void injectInternal() throws Throwable {
 		//va里面存着四种进程，请看VirtualCore的ProcessType
 		//MainProcess即io.virtualapp：这是VirtualApp的宿主界面存在的进程。负责显示已安装目标应用，选择及启动需要双开的目标应用等。
-		//ServiceProcess即io.virtualapp:x：后台服务进程，运行VirtualApp的后台重要服务。如：BinderProvider、DaemonService等。
+		//ServiceProcess即io.virtualapp:x：后台服务进程，va的server端，clinet通过binder和server进行通信。如：BinderProvider、DaemonService等。
 		//ClientProcess(VAppProcess)即io.virtualapp:p*：目标应用运行进程，这个进程提供StubActivity/StubDialog/StubContentProvider子类负责启动目标应用对应的组件。
 		//但是ProcessType的CHILD，没太明白，理解是va自己的子进程，没看到使用
 		// VA自身的App进程不需要 Hook
@@ -124,7 +124,7 @@ public final class InvocationStubManager {
 			addInjector(new PackageManagerStub());
 			return;
 		}
-		//Client APP要Hook整个framework使其调用到VA的framework
+		//Client APP要Hook,AMS,PMS,WMS 整个framework使其调用到VA的framework
 		if (VirtualCore.get().isVAppProcess()) {
 			addInjector(new LibCoreStub());
 			addInjector(new ActivityManagerStub());

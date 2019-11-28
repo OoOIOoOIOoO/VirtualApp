@@ -5,6 +5,8 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.HashMap;
 
+import mirror.android.app.ActivityManagerNative;
+
 public final class RefClass {
 
     private static HashMap<Class<?>,Constructor<?>> REF_TYPES = new HashMap<Class<?>, Constructor<?>>();
@@ -53,8 +55,8 @@ public final class RefClass {
                         // 例如mirror.android.app.LoadedApk中的
                         // mApplicationInfo(在android.app.LoadedApk中也有mApplicationInfo)
 
-                        // public static Class Class = RefClass.load(LoadedApk.class, "android.app.LoadedApk");
-                        // public static RefObject<ApplicationInfo> mApplicationInfo;
+//                        public static Class<?> TYPE = RefClass.load(ActivityManagerNative.class, "android.app.ActivityManagerNative");
+//                        public static RefStaticObject<Object> gDefault;
 
                         // 通过构造函数，newInstance返回一个相同名字的系统字段
                         // 详情看Ref开头的类的构造函数，有注释的是RefObject

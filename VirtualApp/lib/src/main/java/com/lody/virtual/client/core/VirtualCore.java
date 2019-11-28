@@ -181,9 +181,10 @@ public final class VirtualCore {
             this.context = context;
             //获取ActivityThread实例
             mainThread = ActivityThread.currentActivityThread.call();
+            //在这里还是va的pkg信息
             unHookPackageManager = context.getPackageManager();
             hostPkgInfo = unHookPackageManager.getPackageInfo(context.getPackageName(), PackageManager.GET_PROVIDERS);
-            //初始化VAServiceCache
+            //初始化VAServiceCache,看解析中的VA Client Framework 和 VAService 的通讯方式
             IPCBus.initialize(new IServerCache() {
                 @Override
                 public void join(String serverName, IBinder binder) {

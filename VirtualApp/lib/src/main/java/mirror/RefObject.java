@@ -4,7 +4,12 @@ package mirror;
 import com.lody.virtual.VALog;
 
 import java.lang.reflect.Field;
-
+/*
+*
+* Field类封装了Java反射中java.lang.reflect.Field的field.get()和field.set()方法；其他Field类类似。
+*
+*
+* */
 @SuppressWarnings("unchecked")
 public class RefObject<T> {
     private Field field;

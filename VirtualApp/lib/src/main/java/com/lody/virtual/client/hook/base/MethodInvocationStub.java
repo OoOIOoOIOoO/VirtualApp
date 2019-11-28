@@ -49,6 +49,7 @@ public class MethodInvocationStub<T> {
     * 通过本类的addMethodProxy将这些hook点添加过来
     * 传过来的baseInterface其实是一个具体的hook点，然后通过本类的动态代理，实现调用
     * 更新，感觉baseInterface是系统filed或者method的value，今天分析activityManager发现的，有待考究
+    * 更新，ActivityManagerStub为例，baseInterface，传过来的是getDefault这个字段，看源码可以发现，这里就是IActivityManager对象
     *
     * */
     public MethodInvocationStub(T baseInterface, Class<?>... proxyInterfaces) {
@@ -197,6 +198,7 @@ public class MethodInvocationStub<T> {
 
 
             try {
+                //调用MethodProxy的方法
                 if (useProxy && methodProxy.beforeCall(mBaseInterface, method, args)) {
                     res = methodProxy.call(mBaseInterface, method, args);
                     res = methodProxy.afterCall(mBaseInterface, method, args, res);
