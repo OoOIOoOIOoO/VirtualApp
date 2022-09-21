@@ -14,7 +14,8 @@ VAService 统一管理
 hook（动态代理（实现在InvocationStubManager）统默认的xxxManager，然后在动态代理的invoke中调用VxxxManager的对应方法
 VxxxManager又IPC（实现在BinderProvider）调用了上面VAService中cache的对应的VxxxManagerService
 
-目录结构
+目录结构。
+
 VirtualApp
     ├─app
     │  └─src
@@ -98,7 +99,11 @@ VirtualApp
                 │  │          │  │  ├─base
                 │  │          │  │  ├─delegate
                 │  │          │  │  ├─providers
-                │  │          │  │  ├─proxies        //关于 MethodProxies 叫这个名字的类很多，一个 MethodProxies 对应一个需要 Hook 的 framework 类型，需要 Hook 的方法以内部类(MethodProxy)的形式罗列在内部。@Inject(MethodProxies.class)将要 Hook 的方法集合 MethodProxies 绑定到 Stub 上。最终调用内部的 addMethodProxy 方法				
+                │  │          │  │  ├─proxies        //关于 MethodProxies 叫这个名字的类很多，一个 MethodProxies 对应一个需要 Hook 的 framework 类型，
+				                                               需要 Hook 的方法以内部类(MethodProxy)的形式罗列在内部。
+							                                         @Inject(MethodProxies.class)
+							                                         将要 Hook 的方法集合 MethodProxies 绑定到 Stub 上。最终调用内部的 addMethodProxy 方法。
+														
                 │  │          │  │  │  ├─account
                 │  │          │  │  │  ├─alarm
                 │  │          │  │  │  ├─am
