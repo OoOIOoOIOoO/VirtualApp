@@ -79,7 +79,8 @@ public final class BinderProvider extends ContentProvider {
 
     /*
     * call方法用于让其他进程调用本进程中的方法
-    * 在这里，就是将ServiceFetcher暴露给其他进程
+    * 在这里，就是将mServiceFetcher(ServiceFetcher)暴露给其他进程
+    * 调用的位置见ServiceManagerNative
     * */
     @Override
     public Bundle call(String method, String arg, Bundle extras) {

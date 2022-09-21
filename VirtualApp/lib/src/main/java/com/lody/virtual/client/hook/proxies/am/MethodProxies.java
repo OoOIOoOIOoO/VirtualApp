@@ -1631,7 +1631,7 @@ class MethodProxies {
     }
 
 
-    static class GetActivityClassForToken extends MethodProxy {
+    static class AGetActivityClassForToken extends MethodProxy {
 
         @Override
         public String getMethodName() {

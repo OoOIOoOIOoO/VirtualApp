@@ -1,6 +1,8 @@
 fork VirtualApp
 
 自己尝试撸一遍源码，增加注释
+
+双开进程调用的系统Service都是va重新定义的
 VAService 是指 VA 仿造 Android 原生 framework 层 Service 实现的一套副本，
 举例有 VActivityManagerService，它和系统 AMS 一样，只不过他管理的是 VA 内部 Client App 的组件会话。
 VAService 统一管理
@@ -8,6 +10,9 @@ VAService 统一管理
 事实上在 VAService 进程中，每个 Service 都被当作一个普通对象 new 和 初始化。 
 最终，他们被添加到了 ServiceCache 中
 
+如何hook实现双开进程调用的系统Service为自定义的
+hook（动态代理（实现在InvocationStubManager）统默认的xxxManager，然后在动态代理的invoke中调用VxxxManager的对应方法
+VxxxManager又IPC（实现在BinderProvider）调用了上面VAService中cache的对应的VxxxManagerService
 
 目录结构
 VirtualApp
@@ -83,7 +88,8 @@ VirtualApp
                 │  ├─com
                 │  │  └─lody
                 │  │      └─virtual               //框架主代码
-                │  │          ├─client            //client 子进程代码（双开的app进程被VA代理（hook）之后运行的代码）
+                │  │          ├─client            //client 子进程代码（双开的app进程被VA动态代理（hook）之后运行的代码，这里通过代理的invoke调用了ipc的那些V+原名称的manager，
+                                                    然后再ipc对应的VxxxManagerService）
                 │  │          │  ├─badger
                 │  │          │  ├─core
                 │  │          │  ├─env
@@ -93,9 +99,10 @@ VirtualApp
                 │  │          │  │  ├─delegate
                 │  │          │  │  ├─providers
                 │  │          │  │  ├─proxies        //关于 MethodProxies 叫这个名字的类很多，一个 MethodProxies 对应一个需要 Hook 的 framework 类型，
-				                                         需要 Hook 的方法以内部类(MethodProxy)的形式罗列在内部。
-														 @Inject(MethodProxies.class)
-														 将要 Hook 的方法集合 MethodProxies 绑定到 Stub 上。最终调用内部的 addMethodProxy 方法。
+				                       需要 Hook 的方法以内部类(MethodProxy)的形式罗列在内部。
+							@Inject(MethodProxies.class)
+							将要 Hook 的方法集合 MethodProxies 绑定到 Stub 上。最终调用内部的 addMethodProxy 方法。
+														
                 │  │          │  │  │  ├─account
                 │  │          │  │  │  ├─alarm
                 │  │          │  │  │  ├─am
@@ -145,7 +152,8 @@ VirtualApp
                 │  │          │  │  ├─secondary
                 │  │          │  │  └─utils
                 │  │          │  ├─interfaces
-                │  │          │  ├─ipc              //伪造系统framework层的IPC服务类，命名方式：V+原名称。双开进程调用系统framework层代码其实是走的这些伪造类            
+                │  │          │  ├─ipc              //伪造系统framework层的IPC服务类，命名方式：V+原名称。双开进程调用系统framework层代码其实是走的这些伪造类，
+                                                      这些类通过IPC调用了下面的server对应的V+原名称managerservice
                 │  │          │  ├─natives
                 │  │          │  └─stub             //系统四大组件的插桩代码，
                 │  │          ├─helper
@@ -171,7 +179,8 @@ VirtualApp
                 │  │              │  └─parser
                 │  │              ├─secondary
                 │  │              └─vs
-                │  └─mirror                        //系统framework层的镜像，结构和系统的一样，封装了反射获取系统隐藏method和filed的方法，实现访问修改                        
+                │  └─mirror                        //系统framework层的镜像，结构和系统的一样，封装了反射获取系统隐藏method和filed的方法，实现访问修改(目前分析是动态代理的时候
+                                                     用,看MethodInvocationStub的MethodInvocationStub注释)                        
                 │      ├─android                   // /frameworks/base/core/java/android/
                 │      │  ├─accounts
                 │      │  ├─app

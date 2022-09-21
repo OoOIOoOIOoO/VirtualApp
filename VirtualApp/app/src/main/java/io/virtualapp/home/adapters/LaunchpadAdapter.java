@@ -8,6 +8,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.lody.virtual.VALog;
+
 import java.util.List;
 
 import io.virtualapp.R;
@@ -66,6 +68,8 @@ public class LaunchpadAdapter extends RecyclerView.Adapter<LaunchpadAdapter.View
         }
         holder.itemView.setBackgroundColor(holder.color);
         holder.itemView.setOnClickListener(v -> {
+            //ui界面的app监听
+            VALog.d("zzm onclik ：" + data.getName());
             if (mAppClickListener != null) {
                 mAppClickListener.onAppClick(position, data);
             }

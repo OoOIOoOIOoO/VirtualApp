@@ -69,6 +69,7 @@ public class VActivityManager {
         }
     }
 
+    //通过 getService ipc到VActivityManagerService
     public int startActivity(Intent intent, int userId) {
         if (userId < 0) {
             return ActivityManagerCompat.START_NOT_CURRENT_USER_ACTIVITY;

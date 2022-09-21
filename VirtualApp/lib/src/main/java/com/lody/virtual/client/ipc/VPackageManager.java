@@ -31,6 +31,7 @@ public class VPackageManager {
         return sMgr;
     }
 
+    //
     public IPackageManager getService() {
         return singleton.get();
     }

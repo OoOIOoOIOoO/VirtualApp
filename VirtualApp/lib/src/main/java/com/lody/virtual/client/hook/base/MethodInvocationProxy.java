@@ -21,7 +21,14 @@ import java.lang.reflect.Modifier;
  *         <p>
  *         All {@link MethodInvocationProxy}s (plus a couple of other @{@link IInjector}s are installed by
  *         {@link InvocationStubManager}
+ *
  * @see Inject
+ */
+
+/**
+ * 这个类就是初始化所有要代理的方法（MethodProxy），通过addMethodProxy调用mInvocationStub（MethodInvocationStub）的addMethodProxy，
+ * 最后存到了MethodInvocationStub的mInternalMethodProxies
+ * @param <T>
  */
 public abstract class MethodInvocationProxy<T extends MethodInvocationStub> implements IInjector {
 
@@ -43,6 +50,12 @@ public abstract class MethodInvocationProxy<T extends MethodInvocationStub> impl
         if (mInvocationStub == null) {
             return;
         }
+//        以ActivityManager举例
+//        VALog: zzm... super  com.lody.virtual.client.hook.proxies.am.ActivityManagerStub
+//        VALog: zzm... proxiesClass  com.lody.virtual.client.hook.proxies.am.MethodProxies
+//        VALog: zzm...  com.lody.virtual.client.hook.proxies.am.MethodProxies$ServiceDoneExecuting
+//        VALog: zzm...  com.lody.virtual.client.hook.proxies.am.MethodProxies$CheckGrantUriPermission
+//        VALog: zzm...  com.lody.virtual.client.hook.proxies.am.MethodProxies$AGetActivityClassForToken
         Class<? extends MethodInvocationProxy> clazz = getClass();
         VALog.e("zzm... super  " + clazz.getName());
         Inject inject = clazz.getAnnotation(Inject.class);

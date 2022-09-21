@@ -25,6 +25,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.lody.virtual.GmsSupport;
+import com.lody.virtual.VALog;
 import com.lody.virtual.client.stub.ChooseTypeAndAccountActivity;
 import com.lody.virtual.os.VUserInfo;
 import com.lody.virtual.os.VUserManager;
@@ -64,6 +65,7 @@ public class HomeActivity extends VActivity implements HomeContract.HomeView {
 
     private static final String TAG = HomeActivity.class.getSimpleName();
 
+    //mPresenter 实现是HomePresenterImpl
     private HomeContract.HomePresenter mPresenter;
     private TwoGearsView mLoadingView;
     private RecyclerView mLauncherView;
@@ -177,10 +179,12 @@ public class HomeActivity extends VActivity implements HomeContract.HomeView {
         touchHelper.attachToRecyclerView(mLauncherView);
         mLaunchpadAdapter.setAppClickListener((pos, data) -> {
             if (!data.isLoading()) {
+                //判断是点击了添加app吗
                 if (data instanceof AddAppButton) {
                     onAddAppButtonClick();
                 }
                 mLaunchpadAdapter.notifyItemChanged(pos);
+                //这里写的有点搞笑，其实在判断是添加app的时候不执行launch就行了，但是他这是里在lunch里面处理的，可能为了方便吧，反正得判断类型
                 mPresenter.launchApp(data);
             }
         });
@@ -330,6 +334,7 @@ public class HomeActivity extends VActivity implements HomeContract.HomeView {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+        //ListAppFragment 中返回的数据来到这里
         if (resultCode == RESULT_OK && data != null) {
             List<AppInfoLite> appList = data.getParcelableArrayListExtra(VCommends.EXTRA_APP_INFO_LIST);
             if (appList != null) {

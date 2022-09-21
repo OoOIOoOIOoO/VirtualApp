@@ -13,6 +13,8 @@ import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
+import com.lody.virtual.VALog;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
@@ -105,8 +107,10 @@ public class ListAppFragment extends VFragment<ListAppContract.ListAppPresenter>
             Integer[] selectedIndices = mAdapter.getSelectedIndices();
             ArrayList<AppInfoLite> dataList = new ArrayList<AppInfoLite>(selectedIndices.length);
             for (int index : selectedIndices) {
+                //把选中的app添加到列表，返回安装
                 AppInfo info = mAdapter.getItem(index);
                 dataList.add(new AppInfoLite(info.packageName, info.path, info.fastOpen));
+                VALog.d("zzm install " + dataList);
             }
             Intent data = new Intent();
             data.putParcelableArrayListExtra(VCommends.EXTRA_APP_INFO_LIST, dataList);

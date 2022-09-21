@@ -197,7 +197,7 @@ public final class VirtualCore {
                 }
             });
             detectProcessType();
-            //hook系统类
+            //hook系统类（使用动态代理）,在对应的动态代理invoke里面通过VxxxManager.get()调用对应的VxxxManagerService
             InvocationStubManager invocationStubManager = InvocationStubManager.getInstance();
             invocationStubManager.init();
             invocationStubManager.injectAll();

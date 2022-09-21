@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.graphics.Bitmap;
 
 import com.lody.virtual.GmsSupport;
+import com.lody.virtual.VALog;
 import com.lody.virtual.client.core.VirtualCore;
 import com.lody.virtual.os.VUserInfo;
 import com.lody.virtual.os.VUserManager;
@@ -56,6 +57,8 @@ class HomePresenterImpl implements HomeContract.HomePresenter {
     @Override
     public void launchApp(AppData data) {
         try {
+            //判断是不是多开后的多开
+            VALog.d("zzm launchApp " + data.getName());
             if (data instanceof PackageAppData) {
                 PackageAppData appData = (PackageAppData) data;
                 appData.isFirstOpen = false;
@@ -79,6 +82,8 @@ class HomePresenterImpl implements HomeContract.HomePresenter {
 
     @Override
     public void addApp(AppInfoLite info) {
+        // 安装app的逻辑
+        VALog.d("zzm install " + info.packageName);
         class AddResult {
             private PackageAppData appData;
             private int userId;

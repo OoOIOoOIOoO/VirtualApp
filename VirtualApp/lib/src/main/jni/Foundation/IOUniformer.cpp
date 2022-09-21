@@ -462,7 +462,9 @@ HOOK_DEF(int, __getcwd, char *buf, size_t size) {
 // int __openat(int fd, const char *pathname, int flags, int mode);
 HOOK_DEF(int, __openat, int fd, const char *pathname, int flags, int mode) {
     int res;
+    ALOGE("hook __openat pathname %s",pathname);
     const char *redirect_path = relocate_path(pathname, &res);
+    ALOGE("hook __openat redirect_path %s",pathname);
     int ret = syscall(__NR_openat, fd, redirect_path, flags, mode);
     FREE(redirect_path, pathname);
     return ret;
@@ -470,7 +472,9 @@ HOOK_DEF(int, __openat, int fd, const char *pathname, int flags, int mode) {
 // int __open(const char *pathname, int flags, int mode);
 HOOK_DEF(int, __open, const char *pathname, int flags, int mode) {
     int res;
+    ALOGE("hook __open pathname %s",pathname);
     const char *redirect_path = relocate_path(pathname, &res);
+    ALOGE("hook __open redirect_path %s",pathname);
     int ret = syscall(__NR_open, redirect_path, flags, mode);
     FREE(redirect_path, pathname);
     return ret;

@@ -30,8 +30,10 @@ public class MethodInvocationStub<T> {
 
     private static final String TAG = MethodInvocationStub.class.getSimpleName();
 
+    //所有需要代理的方法，在初始化对应的xxxMangerStub（示例看ActivityManagerStub）的时候就添加到了这个map
+    //mProxyInterface的 HookInvocationHandler 里面会从这个map获取对应MethodProxy，然后调用的对应call方法
     private Map<String, MethodProxy> mInternalMethodProxies = new HashMap<>();
-    //target 方法
+    //系统的真实manager对象
     private T mBaseInterface;
     private T mProxyInterface;
     private String mIdentityName;
@@ -42,18 +44,24 @@ public class MethodInvocationStub<T> {
         return mInternalMethodProxies;
     }
 
-    //利用动态代理获取MethodProxy中真实的某个对象
+    //利用动态代理hook在调用系统managerService的时候执行自定义实现（MethodProxy）
     /*
-    * 这里的关系很奇妙，首先MethodProxy类是Hook的代理接口，动态代理中的 call。
+    * MethodProxy类是Hook后的代理接口，动态代理中的 call。
     * MethodProxies类是一个个具体的hook系统点
     * 通过本类的addMethodProxy将这些hook点添加过来
-    * 传过来的baseInterface其实是一个具体的hook点，然后通过本类的动态代理，实现调用
-    * 更新，感觉baseInterface是系统filed或者method的value，今天分析activityManager发现的，有待考究
-    * 更新，ActivityManagerStub为例，baseInterface，传过来的是getDefault这个字段，看源码可以发现，这里就是IActivityManager对象
+    * 传过来的baseInterface其实是一个具体的系统manager，然后通过本类的动态代理，实现调用（就是binder hook，不懂去分析系统的原生getService过程）
+    * baseInterface是系统filed或者method的value
+    * 更新，ActivityManagerStub为例，baseInterface，传过来的是getDefault这个字段，看源码可以发现，这里就是系统的IActivityManager对象
     *
+    * VALog: zzm:android.app.ActivityManagerProxy
+    * VALog: zzms:android.app.IActivityManager
+    * VALog: zzm... super  com.lody.virtual.client.hook.proxies.am.ActivityManagerStub
+    * VALog: zzm... proxiesClass  com.lody.virtual.client.hook.proxies.am.MethodProxies
+    * VALog: zzm...  com.lody.virtual.client.hook.proxies.am.MethodProxies$ServiceDoneExecuting
+    * VALog: zzm...  com.lody.virtual.client.hook.proxies.am.MethodProxies$CheckGrantUriPermission
+    * VALog: zzm... ********还有很多，就看加了什么
     * */
     public MethodInvocationStub(T baseInterface, Class<?>... proxyInterfaces) {
-
         this.mBaseInterface = baseInterface;
         if (baseInterface != null) {
             if (proxyInterfaces == null) {
@@ -63,6 +71,9 @@ public class MethodInvocationStub<T> {
                     VALog.e("zzms:"+c.getName());
                 }
             }
+            //这里发生了什么，这里发生了把系统的XXXManager替换为了HookInvocationHandler
+            //HookInvocationHandler 又调用了自己实现的methodProxy的call（methodProxy初始化见上面的 mInternalMethodProxies ），call里面又调用了VxxxManager
+            //VxxxManager 又IPC调用了VxxxManagerService
             mProxyInterface = (T) Proxy.newProxyInstance(baseInterface.getClass().getClassLoader(), proxyInterfaces, new HookInvocationHandler());
         } else {
             VLog.d(TAG, "Unable to build HookDelegate: %s.", getIdentityName());

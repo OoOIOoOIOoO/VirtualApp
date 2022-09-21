@@ -72,6 +72,11 @@ public class ServiceManagerNative {
         }
     }
 
+    /**
+     *
+     * @param name   service name
+     * @return
+     */
     public static IBinder getService(String name) {
         //如果是本地服务，就从ServiceCache里面拿
         if (VirtualCore.get().isServerProcess()) {

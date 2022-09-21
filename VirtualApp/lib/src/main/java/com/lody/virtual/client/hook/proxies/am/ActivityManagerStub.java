@@ -6,6 +6,7 @@ import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.IInterface;
 
+import com.lody.virtual.VALog;
 import com.lody.virtual.client.core.VirtualCore;
 import com.lody.virtual.client.hook.base.BinderInvocationStub;
 import com.lody.virtual.client.hook.base.Inject;
@@ -41,7 +42,14 @@ import mirror.android.util.Singleton;
 public class ActivityManagerStub extends MethodInvocationProxy<MethodInvocationStub<IInterface>> {
 
     public ActivityManagerStub() {
+        // super里面会add所有的MethodProxy，MethodProxy就是替换后的自定义manager中方法对应的实现
+        // MethodInvocationStub里面实现了从原生manager hook 为自定义manager
+        // ActivityManagerNative.getDefault.call() 是原生的manager
         super(new MethodInvocationStub<>(ActivityManagerNative.getDefault.call()));
+
+        //VALog: zzm MethodInvocationStub baseInterface android.app.ActivityManagerProxy@2af7751
+        //这里就是利用反射获取系统的对应字段值。原理见 RefObject.java
+        VALog.d("zzm MethodInvocationStub baseInterface "+ActivityManagerNative.getDefault.call());
     }
 
     @Override
