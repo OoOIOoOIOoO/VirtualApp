@@ -84,14 +84,16 @@ VirtualApp
                 │                      └─installer
                 ├─java
                 │  ├─android
-                │  │  ├─content          //PackageParser，覆盖了系统的隐藏类 android.content.pm.PackageParser
+                │  │  ├─content          //PackageParser，覆盖了系统的隐藏类 
+                                           android.content.pm.PackageParser
                 │  │  │  └─pm
                 │  │  └─location
                 │  ├─com
                 │  │  └─lody
                 │  │      └─virtual               //框架主代码
-                │  │          ├─client            //client 子进程代码（双开的app进程被VA动态代理（hook）之后运行的代码，这里通过代理的invoke调用了ipc的那些V+原名称的manager，
-                                                    然后再ipc对应的VxxxManagerService）
+                │  │          ├─client            //client 子进程代码（双开的app进程被VA动态代理（hook）之后
+                                                    运行的代码，这里通过代理的invoke调用了ipc的那些
+                                                    V+原名称的manager，然后再ipc对应的VxxxManagerService）
                 │  │          │  ├─badger
                 │  │          │  ├─core
                 │  │          │  ├─env
@@ -100,10 +102,12 @@ VirtualApp
                 │  │          │  │  ├─base
                 │  │          │  │  ├─delegate
                 │  │          │  │  ├─providers
-                │  │          │  │  ├─proxies        //关于 MethodProxies 叫这个名字的类很多，一个 MethodProxies 对应一个需要 Hook 的 framework 类型，
-                                                       需要 Hook 的方法以内部类(MethodProxy)的形式罗列在内部。
-                                                         @Inject(MethodProxies.class)
-                                                 将要 Hook 的方法集合 MethodProxies 绑定到 Stub 上。最终调用内部的 addMethodProxy 方法。
+                │  │          │  │  ├─proxies  //关于 MethodProxies 叫这个名字的类很多，
+                                                一个 MethodProxies 对应一个需要 Hook 的 framework 类型，
+                                               需要 Hook 的方法以内部类(MethodProxy)的形式罗列在内部。
+                                               @Inject(MethodProxies.class)
+                                               将要 Hook 的方法集合 MethodProxies 绑定到 Stub 上。
+                                               最终调用内部的 addMethodProxy 方法。
                 │  │          │  │  │  ├─account
                 │  │          │  │  │  ├─alarm
                 │  │          │  │  │  ├─am
@@ -153,7 +157,8 @@ VirtualApp
                 │  │          │  │  ├─secondary
                 │  │          │  │  └─utils
                 │  │          │  ├─interfaces
-                │  │          │  ├─ipc              //伪造系统framework层的IPC服务类，命名方式：V+原名称。双开进程调用系统framework层代码其实是走的这些伪造类，
+                │  │          │  ├─ipc              //伪造系统framework层的IPC服务类，命名方式：V+原名称。
+                                                      双开进程调用系统framework层代码其实是走的这些伪造类，
                                                       这些类通过IPC调用了下面的server对应的V+原名称managerservice
                 │  │          │  ├─natives
                 │  │          │  └─stub             //系统四大组件的插桩代码，
@@ -166,7 +171,9 @@ VirtualApp
                 │  │          ├─os
                 │  │          ├─remote              //继承Parcelable的一系列实体类   
                 │  │          │  └─vloc
-                │  │          └─server              //和client对应，这是server端，伪造了系统framework层中系统service的代码，通过binder通讯，与client端的IPC下面的V+原名称（各种manager）通讯，例如VAMS
+                │  │          └─server         //和client对应，这是server端，伪造了系统framework层中
+                                                 系统service的代码，通过binder通讯，与client端的IPC下
+                                                 面的V+原名称（各种manager）通讯，例如VAMS
                 │  │              ├─accounts
                 │  │              ├─am
                 │  │              ├─device
@@ -180,9 +187,11 @@ VirtualApp
                 │  │              │  └─parser
                 │  │              ├─secondary
                 │  │              └─vs
-                │  └─mirror                        //系统framework层的镜像，结构和系统的一样，封装了反射获取系统隐藏method和filed的方法，实现访问修改(目前分析是动态代理的时候
-                                                     用,看MethodInvocationStub的MethodInvocationStub注释)                        
-                │      ├─android                   // /frameworks/base/core/java/android/
+                │  └─mirror               //系统framework层的镜像，结构和系统的一样，封装了反射获取
+                                          系统隐藏method和filed的方法，实现访问修改(目前分析是动态代理的时候用
+                                          ,看MethodInvocationStub的MethodInvocationStub注释)        
+                                                          
+                │      ├─android          // /frameworks/base/core/java/android/
                 │      │  ├─accounts
                 │      │  ├─app
                 │      │  │  ├─admin
@@ -213,13 +222,13 @@ VirtualApp
                 │      │  │  └─resource
                 │      │  ├─service 
                 │      │  │  └─persistentdata                 
-                │      │  ├─telephony                     // /frameworks/base/telephony/java/android/telephony/                    
+                │      │  ├─telephony    // /frameworks/base/telephony/java/android/telephony/                    
                 │      │  ├─util
                 │      │  ├─view
                 │      │  ├─webkit
                 │      │  └─widget
                 │      ├─com
-                │      │  └─android                       // /frameworks/base/core/java/com/android
+                │      │  └─android            // /frameworks/base/core/java/com/android
                 │      │      └─internal                 
                 │      │          ├─app
                 │      │          ├─appwidget
@@ -229,7 +238,7 @@ VirtualApp
                 │      │          ├─telephony
                 │      │          └─view
                 │      │              └─inputmethod
-                │      ├─dalvik                           // /libcore/libart/src/main/java/dalvik
+                │      ├─dalvik                    // /libcore/libart/src/main/java/dalvik
                 │      │  └─system
                 │      ├─java
                 │      │  └─lang
